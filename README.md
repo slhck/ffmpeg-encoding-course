@@ -39,7 +39,6 @@ This course is a 1.5 hour introduction to FFmpeg and its tools, basic video codi
             * Visualization
             * Re-scaling and padding
             * Framerate changes
-    - Exercises
 * Getting media information with `ffprobe`
     - General syntax
     - Practical examples
@@ -50,11 +49,9 @@ This course is a 1.5 hour introduction to FFmpeg and its tools, basic video codi
     - Per-frame information
         + Frame types and sizes
         + Coding-related parameters
-    - Exercises
 * Inspecting video codecs
     - FFmpeg debug options
         + Debugging motion vectors
         + Debugging macroblock types
     - Modern video stream analyzers
         + https://arewecompressedyet.com/analyzer/
-    - Exercises
