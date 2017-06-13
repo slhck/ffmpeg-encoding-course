@@ -3,18 +3,18 @@ author: Werner Robitza
 title: FFmpeg Encoding and Editing Course
 date: June 21, 2017
 theme: white
-#highlightTheme: 
+highlightTheme: github
 revealOptions:
     transition: 'fade'
     slideNumber: true
 ---
 
 <style type="text/css">
-.reveal {
-    font-size: 28px;
-}
 h1, h2, h3, h4, h5, p, pre, code {
     text-align: left
+}
+.reveal {
+    font-size: 28px;
 }
 .reveal pre code {
     font-size: 18px;
@@ -27,10 +27,16 @@ h1, h2, h3, h4, h5, p, pre, code {
 .reveal ul, .reveal ol {
     display: block;
 }
+.reveal img {
+  border: 0 !important;
+  box-shadow: none !important;
+}
 </style>
 
 
 # FFmpeg Encoding and Editing Course
+
+<!-- .slide: data-background-color="#006600" -->
 
 Werner Robitza  
 June 21, 2017
@@ -81,6 +87,8 @@ https://www.its.bldrdoc.gov/vqeg/video-datasets-and-organizations.aspx
 ---
 
 # Introduction to FFmpeg
+
+<!-- .slide: data-background-color="#333333" -->
 
 ---
 
@@ -137,7 +145,9 @@ Places to get help:
 
 ---
 
-# General concepts
+# General Video Encoding Concepts
+
+<!-- .slide: data-background-color="#333333" -->
 
 ---
 
@@ -289,6 +299,8 @@ ffmpeg -pix_fmts
 
 # Encoding with the `ffmpeg` Command Line Tool
 
+<!-- .slide: data-background-color="#333333" -->
+
 ---
 
 ## General syntax
@@ -358,6 +370,8 @@ ffmpeg -ss 00:01:50 -i <input> -t 10.5 -c copy <output>
 ffmpeg -ss 2.5 -i <input> -to 10 -c copy <output>
 ```
 
+See: http://trac.ffmpeg.org/wiki/Seeking
+
 ---
 
 ## Setting Quality
@@ -401,13 +415,11 @@ See https://trac.ffmpeg.org/wiki/Encode/H.264
 
 ---
 
-## Speed vs. Quality
+## Speed vs. Quality vs. File Size
 
 (Lossy) encoding is always a trade-off between:
 
-* Speed
-* Quality
-* File size
+![](speed-quality-fliesize.png)
 
 For example:
 
@@ -451,12 +463,33 @@ More complex ways involve filtering, see `fps`, `mpdecimate`, `minterpolate` fil
 
 ---
 
+## Stream Mapping
+
+Each file and its streams have a unique ID, starting with 0.
+
+Examples:
+
+* `0:0` is the first stream of the first input file
+* `0:1` is the second stream of the first input file
+* `2:a:0` is the first audio stream of the third input file
+* …
+
+You can map input streams to output, e.g. to add audio to a video:
+
+```bash
+ffmpeg -i input.mp4 -i input.m4a -c copy -map 0:v:0 -map 1:a:0 output.mp4
+```
+
+See: http://trac.ffmpeg.org/wiki/Map
+
+---
+
 ## Simple Filtering
 
 ffmpeg has lots of video, audio, subtitle filters:
 
 ```bash
-ffmpeg -i <input> -filter:v <filter1>,<filter2>,<filter3> <output>
+ffmpeg -i <input> -filter:v "<filter1>,<filter2>,<filter3>" <output>
 ```
 
 A `<filter>` has a name and several options, and some pre-defined variables:
@@ -468,6 +501,7 @@ A `<filter>` has a name and several options, and some pre-defined variables:
 Notes:
 
 * You can use `-filter:a` for audio filters.
+* Filters can be chained by separating them with a `,`
 * See all filters with `ffmpeg -filters`
 * Check http://trac.ffmpeg.org/wiki/FilteringGuide and http://ffmpeg.org/ffmpeg-filters.html
 
@@ -478,7 +512,7 @@ Notes:
 Scale to 320×240:
 
 ```bash
-ffmpeg -i <input> -vf scale=w=320:h=240 <output>
+ffmpeg -i <input> -vf "scale=w=320:h=240" <output>
 ```
 
 Scale to a height of 240 and keep aspect ratio divisible by 2:
@@ -490,7 +524,7 @@ ffmpeg -i <input> -vf scale=w=-2:h=240 <output>
 Scale to 1280×720 or smaller if needed:
 
 ```bash
-ffmpeg -i <input> -vf scale=1280:720:force_original_aspect_ratio=decrease <output>
+ffmpeg -i <input> -vf "scale=1280:720:force_original_aspect_ratio=decrease" <output>
 ```
 
 More tips:
@@ -502,33 +536,104 @@ More tips:
 
 ## Padding
 
-TODO
+Add black borders to a file, e.g. 1920×800 input to 1920×1080:
+
+```bash
+ffmpeg -i <input> -vf "pad=1920:1080:(ow-iw)/2:(oh-ih)/2" <output>
+```
+
+![](padding.png)
+
+Note that:
+
+* You can use mathematical expressions
+* `ow` and `oh` are output width and height
+* `iw` and `ih` are input width and height
 
 ---
 
 ## Complex Filtering
 
-TODO
+Complex filters have more than one in- and/or output:
+
+```bash
+ffmpeg -i <input1> -i <input2> -filter_complex \
+    "[0:v:0][1:v:0]overlay[outv]" \
+    -map "[outv]" <output>
+```
+
+Steps:
+
+* Specify inputs to filterchain (e.g. `[0:v:0][1:v:0]`)
+* Specify filters in the chain (e.g. `overlay`)
+* Assign an output label to chain (e.g. `[outv]`)
+* Map output labels to final output file
+* You can have multiple filterchains with `;`
+
+See: http://ffmpeg.org/ffmpeg-all.html#Filtergraph-syntax-1
+
+---
+
+## Concatenating Streams
+
+![](concat.png)
+
+```bash
+ffmpeg -i <input1> -i <input2> -i <input3> -filter_complex \
+    "[0:1][0:2][1:0][1:1][2:0][2:1]concat=n=3:v=1:a=1[outv][outa]" \
+    -map "[outv]" -map "[outa]" <output>
+```
+
+See: http://trac.ffmpeg.org/wiki/Concatenate
+
+---
+
+## Timeline Editing
+
+Enable filters only at a specific point in time.
+
+Example:
+
+* Show a watermark in the top left corner
+* Between seconds 1 and 2 only
+
+```bash
+ffmpeg -i <video> -i <watermark> -filter_complex \
+    "[0:v][1:v]overlay=10:10:enable='between(t,1,2)'[outv]" \
+    -map "[outv]" <output>
+```
+
+See: http://ffmpeg.org/ffmpeg-all.html#Timeline-editing
 
 ---
 
 ## Calculating Simple Quality Metrics
 
-* PSNR
-
-TODO
-
-SSIM:
+PSNR (Peak Signal To Noise Ratio):
 
 ```bash
-ffmpeg -i <degraded> -i <reference> -filter_complex ssim -f null /dev/null
+$ ffmpeg -i <degraded> -i <reference> -filter_complex psnr -f null /dev/null
+[Parsed_psnr_0 @ 0x7fdb187045c0] PSNR y:33.437789 u:39.814416 v:39.319141 average:34.698320 min:29.305186 max:inf
 ```
 
-Optionally add: `2>&1 | grep SSIM`
+SSIM ([Structural Similarity](https://en.wikipedia.org/wiki/SSIM)):
+
+```bash
+$ ffmpeg -i <degraded> -i <reference> -filter_complex ssim -f null /dev/null
+[Parsed_ssim_0 @ 0x7fbf0500b660] SSIM Y:0.925477 (11.277116) U:0.948906 (12.916325) V:0.946795 (12.740513) All:0.932935 (11.735054)
+```
+
+Notes:
+
+* Optionally add: `2>&1 | grep SSIM` to filter only relevant output
+* Windows users use `NUL` instead of `/dev/null`
+* Try to use "proper" quality metrics instead, e.g. [VQM](https://www.its.bldrdoc.gov/resources/video-quality-research/software.aspx) or [VMAF](https://github.com/Netflix/vmaf)
 
 ---
 
-## Exercise No. 1
+## Exercise
+
+<!-- .slide: data-background-color="#660000" -->
 
 * Use two-pass encoding to transcode a sample video to H.264
 * Choose a suitable target bitrate (e.g. 4.5 MBit/s for Full HD)
@@ -540,50 +645,100 @@ Questions:
 
   *Hint: On Linux you can use the `time` command*
 
-* What is the quality of the encoded videos?
+* Draw a curve that shows the time taken (y-axis) vs. preset used (x-axis)
+* Draw the same curve for a few different target bitrates and compare them
+* What is the quality of the encoded videos with the different presets?
 
   *Hint: You can use the built-in `ssim` filter as a rough measure*
 
----
-
-## Exercise No. 2
-
-TODO Scaling
+* Draw a curve that shows the quality (y-axis) vs. preset used (x-axis)
 
 ---
 
 # Getting media information with `ffprobe`
 
----
-
-## General syntax
+<!-- .slide: data-background-color="#333333" -->
 
 ---
 
-## Practical examples
+## General Concepts
+
+```bash
+ffprobe <input>
+    [-select_streams <selection>]
+    [-show_streams|-show_format|-show_frames|-show_packets]
+    [-show_entries <entries>]
+    [-of <output-format>]
+```
+
+Explanation:
+
+* `select_streams` for specificing only video or audio, for example
+* `show_` for selecting which information to show
+* `show_entries` for selecting fewer entries to show
+* `of` to set output format
+
+See:
+
+* https://ffmpeg.org/ffprobe.html
+* http://trac.ffmpeg.org/wiki/FFprobeTips
 
 ---
 
-## Parsing stream info from files
+## Practical `ffprobe` Examples Pt. 1
 
-+ Number of streams
-+ Duration
-+ Bitrates
+Show all available streams:
+
+```bash
+ffprobe <input> -show_streams
+```
+
+Show info on video stream:
+
+```bash
+ffprobe <input> -select_streams v -show_format
+```
+
+Show presentation timestamp and frame type of every frame, in CSV format (`p=0` disables CSV section headers)
+
+```bash
+ffprobe <input> -show_frames -show_entries frame=pkt_pts_time,pict_type -of csv=p=0
+```
 
 ---
 
-## Per-frame information
+## Practical `ffprobe` Examples Pt. 2
 
-+ Frame types and sizes
-+ Coding-related parameters
+Change output to JSON format for parsing:
 
----
+```bash
+ffprobe <input> -select_streams v -show_packets -of json
+```
 
-## Exercises
+Get the number of streams in a file (`nk=1` disables keys):
+
+```bash
+ffprobe <input> -show_format -show_entries format=nb_streams -of compact=nk=1:p=0
+```
+
+Get the duration in seconds or `HH:MM:SS.ms`:
+
+```bash
+ffprobe <input> -show_format -show_entries format=duration -of compact=nk=1:p=0
+ffprobe -sexagesimal <input> -show_format -show_entries format=duration -of compact=nk=1:p=0
+```
+
+Get bitrate of audio stream in Bit/s:
+
+```bash
+ffprobe <input> -select_streams a -show_entries stream=bit_rate -of compact=nk=1:p=0
+```
 
 ---
 
 # Inspecting video codecs
+
+<!-- .slide: data-background-color="#333333" -->
 
 ---
 
