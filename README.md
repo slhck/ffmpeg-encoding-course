@@ -9,6 +9,8 @@ This course is a 1.5 hour introduction to FFmpeg and its tools, basic video codi
 - This repository
 - ffmpeg (≥ v3.3.2) with libx264, libx265, libvpx
 - ffprobe
+- ffplay
+- [Big Buck Bunny](http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_60fps_normal.mp4) video (339 MB)
 
 # Course Contents
 

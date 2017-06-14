@@ -82,7 +82,7 @@ Sample videos, linked from VQEG
 
 https://www.its.bldrdoc.gov/vqeg/video-datasets-and-organizations.aspx
 
-![](./vqeg.jpg)
+![](vqeg.jpg)
 
 ---
 
@@ -94,7 +94,7 @@ https://www.its.bldrdoc.gov/vqeg/video-datasets-and-organizations.aspx
 
 ## About the Project
 
-![](./ffmpeg.png)
+![](ffmpeg.png)
 
 * Free, open-source software for multimedia editing, conversion, …
 * Started in 2000
@@ -122,11 +122,11 @@ FFmpeg contains:
 
 ## Installation / Compilation
 
-Installation Method  | Pro           | Con
-------------- | ------------- | -----
-Building from source | Offers all options, tools, codecs | Takes time
-Downloading static build | Easy and fast | Does not offer all codecs
-Installing from package manager (e.g., `apt-get`) | Easy and fast | Does not always offer latest version or all codecs
+Installation Method                               | Pro                               | Con
+------------------------------------------------- | --------------------------------- | ---------------------------------
+Building from source                              | Offers all options, tools, codecs | Takes time
+Downloading static build                          | Easy and fast                     | Does not offer all codecs
+Installing from package manager (e.g., `apt-get`) | Easy and fast                     | Does not always offer latest version or all codecs
 
 Get source code and static builds from: http://ffmpeg.org/download.html
 
@@ -287,7 +287,7 @@ Encoders:
 * Representation of raw pixels in video streams
 * Specifies order of luma/color components and chroma subsampling
 
-![](./color-subsampling.png)
+![](color-subsampling.png)
 
 Supported  pixel formats:
 
@@ -415,6 +415,20 @@ See https://trac.ffmpeg.org/wiki/Encode/H.264
 
 ---
 
+## Rate Control
+
+Different kinds of rate control:
+
+* Constant Bitrate (CBR)
+* Variable Bitrate (VBR)
+    * Average bitrate (ABR)
+    * Constant quantization parameter (CQP)
+    * Constant quality, based on psychovisual properties, e.g. CRF in x264/x265/libvpx-vp9
+
+More info: https://slhck.info/video/2017/03/01/rate-control.html
+
+---
+
 ## Speed vs. Quality vs. File Size
 
 (Lossy) encoding is always a trade-off between:
@@ -443,11 +457,11 @@ All presets: `ultrafast`, `superfast`, `veryfast`, `faster`, `fast`, `medium`, `
 
 Example results (all have the same quality!):
 
-Preset | Encoding Time | File Size
--------|---------------|----------
-ultrafast | 4.85s | 15M
-medium | 24.13s | 5.2M
-veryslow | 112.23s | 4.9M
+Preset    | Encoding Time | File Size
+----------|---------------|----------
+ultrafast | 4.85s         | 15M
+medium    | 24.13s        | 5.2M
+veryslow  | 112.23s       | 4.9M
 
 ---
 
@@ -552,6 +566,25 @@ Note that:
 
 ---
 
+## Fading
+
+Simple fade-in and fade-out at a specific time for a specific duration.
+
+```bash
+ffmpeg -i <input> -filter:v \
+  "fade=t=in:st=0:d=5,fade=t=out:st=30:d=5" \
+  <output>
+```
+
+Notes:
+
+* `t` sets the fade type (in or out)
+* `d` sets the duration
+* `st` sets the start time in seconds or `HH:MM:SS.msec`
+* `ffmpeg` can't "search from the back"; you have to find the total duration yourself (e.g. with `ffprobe`)
+
+---
+
 ## Complex Filtering
 
 Complex filters have more than one in- and/or output:
@@ -566,7 +599,7 @@ Steps:
 
 * Specify inputs to filterchain (e.g. `[0:v:0][1:v:0]`)
 * Specify filters in the chain (e.g. `overlay`)
-* Assign an output label to chain (e.g. `[outv]`)
+* Specify output labels of chain (e.g. `[outv]`)
 * Map output labels to final output file
 * You can have multiple filterchains with `;`
 
@@ -576,6 +609,8 @@ See: http://ffmpeg.org/ffmpeg-all.html#Filtergraph-syntax-1
 
 ## Concatenating Streams
 
+Decode three video/audio streams and append to one another:
+
 ![](concat.png)
 
 ```bash
@@ -584,7 +619,23 @@ ffmpeg -i <input1> -i <input2> -i <input3> -filter_complex \
     -map "[outv]" -map "[outa]" <output>
 ```
 
-See: http://trac.ffmpeg.org/wiki/Concatenate
+See: http://trac.ffmpeg.org/wiki/Concatenate (also for other methods)
+
+---
+
+## Exercise
+
+<!-- .slide: data-background-color="#660000" -->
+
+Take an original 1920×1080 video file and downscale it to a height of 240 pixels. Keep the same aspect ratio. Keep the original audio stream without re-encoding.
+
+Tasks/Questions:
+
+* What is the final output width? What should the output width have been according to math?
+* Why are these values sometimes different?
+* Take the downscaled version of the video and append it to the original video by concatenating, and encode the final file with a lossless codec of your choice
+    * *Hint: You have to first upscale it again*
+    * Bonus points if you can do this in one command
 
 ---
 
@@ -635,23 +686,14 @@ Notes:
 
 <!-- .slide: data-background-color="#660000" -->
 
-* Use two-pass encoding to transcode a sample video to H.264
-* Choose a suitable target bitrate (e.g. 4.5 MBit/s for Full HD)
-* Encode the video with different speed presets for `libx264`
+Use two-pass encoding to transcode a sample video to H.264. Choose a set of 5 suitable target bitrates (e.g. between 2–8 MBit/s for Full HD). Encode the video with all existing speed presets for `libx264` and all bitrates.
 
-Questions:
+Tasks/Questions:
 
-* How long does the encoding take for a given speed preset?
-
-  *Hint: On Linux you can use the `time` command*
-
-* Draw a curve that shows the time taken (y-axis) vs. preset used (x-axis)
-* Draw the same curve for a few different target bitrates and compare them
-* What is the quality of the encoded videos with the different presets?
-
-  *Hint: You can use the built-in `ssim` filter as a rough measure*
-
-* Draw a curve that shows the quality (y-axis) vs. preset used (x-axis)
+1. How long does the encoding take for a given speed preset? (*Hint: On Linux you can use the `time` command*)
+2. For every target bitrate, draw a curve that shows the time taken (y-axis) vs. preset used (x-axis). (*Bonus points if you overlay the curves on top of each other in one plot, e.g. through different colors.*)
+4. Calculate a quality measure for the encoded videos with the different presets. (*Hint: You can use the built-in `ssim` filter as a rough measure*)
+5. For every target bitrate, draw a curve that shows the quality (y-axis) vs. preset used (x-axis). (*Bonus points if you overlay the curves on top of each other in one plot, e.g. through different colors.*)
 
 ---
 
@@ -736,20 +778,35 @@ ffprobe <input> -select_streams a -show_entries stream=bit_rate -of compact=nk=1
 
 ---
 
-# Inspecting video codecs
+# Inspecting Video Codecs
 
 <!-- .slide: data-background-color="#333333" -->
 
 ---
 
-## FFmpeg debug options
+## Debugging Motion Vectors
 
-+ Debugging motion vectors
-+ Debugging macroblock types
+Simple way to visualize motion in FFmpeg with MPEG codecs (H.264, H.265, …):
+
+```bash
+
+```
 
 ---
 
-## Modern video stream analyzers
+## Debugging Macroblock Types
+
+Visualize macroblock splits in FFmpeg with MPEG codecs (H.264, H.265, …):
+
+```bash
+
+```
+
+---
+
+## Video Stream Analyzers
+
+Different software for analyzing bitstreams graphically:
 
 + https://arewecompressedyet.com/analyzer/
 
