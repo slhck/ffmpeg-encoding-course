@@ -14,46 +14,38 @@ This course is a 1.5 hour introduction to FFmpeg and its tools, basic video codi
 
 # Course Contents
 
-* General Introduction
-    - About me
-    - Goals
-    - Requirements
-* Introduction to FFmpeg
-    - About the project
-    - About the libraries (`libav*`)
-    - Installation / Compilation
-    - Getting help (Wiki, IRC, mailing list, Stack Overflow)
-* General concepts
-    - Container formats (AVI, MKV, MP4, …)
-    - Codecs (H.264, H.265, VP9, AV1, …)
-    - Encoders (x264, x265, libvpx, libaom, …)
-    - Pixel formats
-* Encoding with the `ffmpeg` command line tool
-    - General syntax
-    - Transcoding
-        + General considerations
-        + Setting quality
-        + Practical examples
-          * Encoding to H.264/H.265/VP9
-          * Encoding a set of images
-    - Filtering
-        + Practical examples
-            * Visualization
-            * Re-scaling and padding
-            * Framerate changes
-* Getting media information with `ffprobe`
-    - General syntax
-    - Practical examples
-    - Parsing stream info from files
-        + Number of streams
-        + Duration
-        + Bitrates
-    - Per-frame information
-        + Frame types and sizes
-        + Coding-related parameters
-* Inspecting video codecs
-    - FFmpeg debug options
-        + Debugging motion vectors
-        + Debugging macroblock types
-    - Modern video stream analyzers
-        + https://arewecompressedyet.com/analyzer/
+TODO
+
+# Slides
+
+The slides in `slides/` are written in Markdown and can be converted to Reveal.js slides:
+
+    npm install -g reveal-md
+    cd slides/
+    reveal-md ffmpeg-encoding-course.md
+
+This will open a browser and show your slides at `http://localhost:1948/ffmpeg-encoding-course.md#/`.
+
+To convert the slides to a static site:
+
+    reveal-md ffmpeg-encoding-course.md --static
+
+To convert them to a PDF, install [Decktape](https://github.com/astefanutti/decktape):
+
+    curl -L https://github.com/astefanutti/decktape/archive/v1.0.0.tar.gz | tar -xz --exclude phantomjs
+    cd decktape-1.0.0
+
+Then install the PhandomJS fork:
+
+    # Windows (MSVC 2013), for Windows Vista or later, bundles VC++ Runtime 2013
+    $ curl -L https://github.com/astefanutti/decktape/releases/download/v1.0.0/phantomjs-msvc2013-x86.exe -o phantomjs.exe
+    # Mac OS X (Cocoa), 64-bit, for OS X 10.6 or later
+    $ curl -L https://github.com/astefanutti/decktape/releases/download/v1.0.0/phantomjs-osx-cocoa-x86-64 -o phantomjs
+    # Linux (static build), 64-bit, requires fontconfig (CentOS) or libfontconfig (Debian, Ubuntu)
+    $ curl -L https://github.com/astefanutti/decktape/releases/download/v1.0.0/phantomjs-linux-x86-64 -o phantomjs
+    # Make executable:
+    chmod +x phantomjs
+
+Then convert to PDF:
+
+    ./phantomjs decktape.js reveal "http://localhost:1948/ffmpeg-encoding-course.md#/" ffmpeg-encoding-course.pdf
