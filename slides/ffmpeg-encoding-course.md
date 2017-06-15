@@ -51,7 +51,8 @@ June 21, 2017
 Contact:
 
 * `werner.robitza@gmail.com`
-* http://slhck.info / `@slhck`
+* http://slhck.info
+* `@slhck`
 
 ---
 
@@ -59,11 +60,11 @@ Contact:
 
 You should learn:
 
-* basic concepts
-* install ffmpeg and tools
-* encode videos
-* apply filters
-* debug videos
+* Basic concepts
+* Installing ffmpeg and tools
+* Encoding videos
+* Appling filters
+* Analyzing videos
 
 ---
 
@@ -77,7 +78,7 @@ You should learn:
 
 ## Resources
 
-Sample videos, linked from VQEG  
+If you need sample videos for testing, see overview from VQEG  
 (Video Quality Experts Group):
 
 https://www.its.bldrdoc.gov/vqeg/video-datasets-and-organizations.aspx
@@ -120,12 +121,20 @@ FFmpeg contains:
 
 ---
 
+## Architecture
+
+Simplfied overall architecture:
+
+![](architecture.png)
+
+---
+
 ## Installation / Compilation
 
 Installation Method                               | Pro                               | Con
 ------------------------------------------------- | --------------------------------- | ---------------------------------
-Building from source                              | Offers all options, tools, codecs | Takes time
-Downloading static build                          | Easy and fast                     | Does not offer all codecs
+Building from source                              | Offers all options, tools, codecs | Takes time, hard to update
+Downloading static build                          | Easy and fast                     | Does not offer all codecs, manual update
 Installing from package manager (e.g., `apt-get`) | Easy and fast                     | Does not always offer latest version or all codecs
 
 Get source code and static builds from: http://ffmpeg.org/download.html
@@ -297,6 +306,23 @@ ffmpeg -pix_fmts
 
 ---
 
+## Exercise
+
+<!-- .slide: data-background-color="#660000" -->
+
+Tasks:
+
+* Download a PNG image from the Web
+* Run the following command:
+
+        ffmpeg -loop 1 -i <image> -t 5 output.mp4
+
+* What codec and encoder are used for the output file?
+* What pixel format is auto-selected by ffmpeg?
+* Why do you think this is done?
+
+---
+
 # Encoding with the `ffmpeg` Command Line Tool
 
 <!-- .slide: data-background-color="#333333" -->
@@ -370,7 +396,11 @@ ffmpeg -ss 00:01:50 -i <input> -t 10.5 -c copy <output>
 ffmpeg -ss 2.5 -i <input> -to 10 -c copy <output>
 ```
 
-See: http://trac.ffmpeg.org/wiki/Seeking
+Notes:
+
+* When re-encoding, seeking is always accurate
+* When copying bitstreams (`-c copy`), ffmpeg may copy frames that are not shown but necessary
+* Also see: http://trac.ffmpeg.org/wiki/Seeking
 
 ---
 
@@ -384,7 +414,7 @@ Possible options (just examples):
 * `-b:v` or `-b:a` to set bitrate (e.g., `-b:v 1000K`, `-b:v 8M`)
 * `-q:v` or `-q:a` to set fixed-quality parameter (e.g., `-q:a 2` for native AAC encoder)
 
-Encoder-specific options:
+Examples of encoder-specific options:
 
 * `-crf` to set [Constant Rate Factor](http://slhck.info/video/2017/02/24/crf-guide.html) for libx264/libx265
 * `-vbr` to set constant quality for FDK-AAC encoder
@@ -425,7 +455,7 @@ Different kinds of rate control:
     * Constant quantization parameter (CQP)
     * Constant quality, based on psychovisual properties, e.g. CRF in x264/x265/libvpx-vp9
 
-More info: https://slhck.info/video/2017/03/01/rate-control.html
+Which rate control to use for which case? More info: https://slhck.info/video/2017/03/01/rate-control.html
 
 ---
 
@@ -631,6 +661,7 @@ Take an original 1920×1080 video file and downscale it to a height of 240 pixel
 
 Tasks/Questions:
 
+* How do you make ffmpeg find out the output width?
 * What is the final output width? What should the output width have been according to math?
 * Why are these values sometimes different?
 * Take the downscaled version of the video and append it to the original video by concatenating, and encode the final file with a lossless codec of your choice
@@ -678,22 +709,45 @@ Notes:
 
 * Optionally add: `2>&1 | grep SSIM` to filter only relevant output
 * Windows users use `NUL` instead of `/dev/null`
-* Try to use "proper" quality metrics instead, e.g. [VQM](https://www.its.bldrdoc.gov/resources/video-quality-research/software.aspx) or [VMAF](https://github.com/Netflix/vmaf)
+* PSNR is an unreliable and inaccurate quality metric, SSIM is better but not perfect
+* Try to use "proper" video quality metrics instead, e.g. [VQM](https://www.its.bldrdoc.gov/resources/video-quality-research/software.aspx) or [VMAF](https://github.com/Netflix/vmaf)
 
 ---
 
-## Exercise
+## Exercise Pt. 1
 
 <!-- .slide: data-background-color="#660000" -->
 
-Use two-pass encoding to transcode a sample video to H.264. Choose a set of 5 suitable target bitrates (e.g. between 2–8 MBit/s for Full HD). Encode the video with all existing speed presets for `libx264` and all bitrates.
+Tasks:
 
-Tasks/Questions:
+* Use two-pass encoding to transcode the sample video to H.264 with x264
+* Use the following bitrates: 1M, 2M, 4M, 6M, 8M
+* Encode the video with all existing speed presets for `libx264` and all chosen bitrates.
 
-1. How long does the encoding take for a given speed preset? (*Hint: On Linux you can use the `time` command*)
+Hints:
+
+* This may take some time overall depending on your CPU speed
+* It's easier to write a simple Batch or Bash script than type all the commands
+
+---
+
+## Exercise Pt. 2
+
+<!-- .slide: data-background-color="#660000" -->
+
+Questions:
+
+1. How long does the encoding take for a given speed preset, on average?
 2. For every target bitrate, draw a curve that shows the time taken (y-axis) vs. preset used (x-axis). (*Bonus points if you overlay the curves on top of each other in one plot, e.g. through different colors.*)
-4. Calculate a quality measure for the encoded videos with the different presets. (*Hint: You can use the built-in `ssim` filter as a rough measure*)
+3. Do you see a difference in quality between the encoded clips?
+4. Calculate a quality measure for the encoded videos with the different presets.
 5. For every target bitrate, draw a curve that shows the quality (y-axis) vs. preset used (x-axis). (*Bonus points if you overlay the curves on top of each other in one plot, e.g. through different colors.*)
+
+Hints:
+
+* You can use the built-in `ssim` filter as a rough measure for quality
+* On Linux you can use the `time` command, on Windows this is a little harder (do a web search)
+* This can be done with Excel, but other tools like Python or R are useful as well
 
 ---
 
@@ -810,3 +864,20 @@ Different software for analyzing bitstreams graphically:
 
 + https://arewecompressedyet.com/analyzer/
 
+---
+
+# Summary
+
+<!-- .slide: data-background-color="#333333" -->
+
+---
+
+## Summary
+
+You should have learned how to:
+
+* Understand FFmpeg libraries, codecs, containers, encoders, …
+* Encode video and audio
+* Apply basic filters
+* Read stream information and metadata
+* Find help if you get stuck
