@@ -83,7 +83,7 @@ If you need sample videos for testing, see overview from VQEG
 
 https://www.its.bldrdoc.gov/vqeg/video-datasets-and-organizations.aspx
 
-![](vqeg.jpg)
+![](images/vqeg.jpg)
 
 ---
 
@@ -95,7 +95,7 @@ https://www.its.bldrdoc.gov/vqeg/video-datasets-and-organizations.aspx
 
 ## About the Project
 
-![](ffmpeg.png)
+![](images/ffmpeg.png)
 
 * Free, open-source software for multimedia editing, conversion, …
 * Started in 2000
@@ -125,7 +125,7 @@ FFmpeg contains:
 
 Simplfied overall architecture:
 
-![](architecture.png)
+![](images/architecture.png)
 
 ---
 
@@ -296,7 +296,7 @@ Encoders:
 * Representation of raw pixels in video streams
 * Specifies order of luma/color components and chroma subsampling
 
-![](color-subsampling.png)
+![](images/color-subsampling.png)
 
 Supported  pixel formats:
 
@@ -463,7 +463,7 @@ Which rate control to use for which case? More info: https://slhck.info/video/20
 
 (Lossy) encoding is always a trade-off between:
 
-![](speed-quality-fliesize.png)
+![](images/speed-quality-fliesize.png)
 
 For example:
 
@@ -586,7 +586,7 @@ Add black borders to a file, e.g. 1920×800 input to 1920×1080:
 ffmpeg -i <input> -vf "pad=1920:1080:(ow-iw)/2:(oh-ih)/2" <output>
 ```
 
-![](padding.png)
+![](images/padding.png)
 
 Note that:
 
@@ -641,7 +641,7 @@ See: http://ffmpeg.org/ffmpeg-all.html#Filtergraph-syntax-1
 
 Decode three video/audio streams and append to one another:
 
-![](concat.png)
+![](images/concat.png)
 
 ```bash
 ffmpeg -i <input1> -i <input2> -i <input3> -filter_complex \
