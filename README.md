@@ -4,6 +4,14 @@ Author: Werner Robitza
 
 This course is a 1.5 hour introduction to FFmpeg and its tools, basic video coding technology, and some hands-on examples. It contains all the slides, scripts and demo material to get started.
 
+# Course Contents
+
+- Introduction to FFmpeg
+- General Video Encoding Concepts
+- Encoding with the `ffmpeg` Command Line Tool
+- Getting media information with `ffprobe`
+- Inspecting Video Codecs
+
 # Requirements
 
 - This repository
@@ -12,9 +20,9 @@ This course is a 1.5 hour introduction to FFmpeg and its tools, basic video codi
 - ffplay
 - [Big Buck Bunny](http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_60fps_normal.mp4) video (339 MB)
 
-# Course Contents
+# License
 
-TODO
+MIT License (c) 2017, see LICENSE for more.
 
 # Slides
 
@@ -26,9 +34,15 @@ The slides in `slides/` are written in Markdown and can be converted to Reveal.j
 
 This will open a browser and show your slides at `http://localhost:1948/ffmpeg-encoding-course.md#/`.
 
+## Converting to Static
+
 To convert the slides to a static site:
 
-    reveal-md ffmpeg-encoding-course.md --static
+    reveal-md ffmpeg-encoding-course.md --static ../docs
+
+This static site in `docs` will be shown via GitHub Pages.
+
+## Converting to PDF
 
 To convert them to a PDF, install [Decktape](https://github.com/astefanutti/decktape):
 
