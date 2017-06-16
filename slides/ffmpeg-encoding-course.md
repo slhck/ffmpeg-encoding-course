@@ -72,7 +72,7 @@ You should learn:
 
 * These slides
 * `ffmpeg`, `ffprobe` and `ffplay` installed
-* Some sample videos
+* Some sample videos, example: http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_60fps_normal.mp4
 
 ---
 
@@ -118,6 +118,8 @@ FFmpeg contains:
 * `libavcodec`: Reads and writes codecs (H.264, H.265, VP9, …)
 * `libavfilter`: Various filters for video and audio
 * ... and many more
+
+Examples on how to programmatically use libraries: http://leixiaohua1020.github.io/#ffmpeg-development-examples
 
 ---
 
@@ -843,8 +845,21 @@ ffprobe <input> -select_streams a -show_entries stream=bit_rate -of compact=nk=1
 Simple way to visualize motion in FFmpeg with MPEG codecs (H.264, H.265, …):
 
 ```bash
-
+ffplay -flags2 +export_mvs input.mp4 -vf codecview=mv=pf+bf+bb
+ffmpeg -flags2 +export_mvs -i input.mp4 -vf codecview=mv=pf+bf+bb <output>
 ```
+
+- `pf` – forward predicted motion vectors of P pictures
+- `bf` – forward predicted motion vectors of B pictures
+- `bb` – backward predicted motion vectors of B pictures
+
+---
+
+## Debugging Motion Vectors
+
+![](images/vismv_pf.png)
+
+More info: http://trac.ffmpeg.org/wiki/Debug/MacroblocksAndMotionVectors
 
 ---
 
@@ -853,8 +868,11 @@ Simple way to visualize motion in FFmpeg with MPEG codecs (H.264, H.265, …):
 Visualize macroblock splits in FFmpeg with MPEG codecs (H.264, H.265, …):
 
 ```bash
-
+ffplay -debug vis_mb_type input.mp4
+ffmpeg -debug vis_mb_type -i input.mp4 output.mp4
 ```
+
+![](images/vis_mb_type.png)
 
 ---
 
@@ -862,7 +880,10 @@ Visualize macroblock splits in FFmpeg with MPEG codecs (H.264, H.265, …):
 
 Different software for analyzing bitstreams graphically:
 
-+ https://arewecompressedyet.com/analyzer/
+* [Elecard Stream Analyzer](https://www.elecard.com/products/video-analysis/stream-analyzer) (commercial)
+* [CodecVisa](http://www.codecian.com/) (commercial)
+* [Intel Video Pro Analyzer](https://software.intel.com/en-us/intel-video-pro-analyzer) (commercial)
+* [AOMAnalyzer](https://people.xiph.org/~mbebenita/analyzer/) (free, AV1/VP9 video)
 
 ---
 
