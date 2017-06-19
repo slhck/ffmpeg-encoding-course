@@ -4,6 +4,8 @@ Author: Werner Robitza
 
 This course is a 1.5 hour introduction to FFmpeg and its tools, basic video coding technology, and some hands-on examples. It contains all the slides, scripts and demo material to get started.
 
+Access the slides here: http://slhck.info/ffmpeg-encoding-course/
+
 # Course Contents
 
 - Introduction to FFmpeg
@@ -23,6 +25,8 @@ This course is a 1.5 hour introduction to FFmpeg and its tools, basic video codi
 # License
 
 MIT License (c) 2017, see LICENSE for more.
+
+---
 
 # Slides
 

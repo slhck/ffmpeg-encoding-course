@@ -136,10 +136,11 @@ Simplfied overall architecture:
 Installation Method                               | Pro                               | Con
 ------------------------------------------------- | --------------------------------- | ---------------------------------
 Building from source                              | Offers all options, tools, codecs | Takes time, hard to update
-Downloading static build                          | Easy and fast                     | Does not offer all codecs, manual update
-Installing from package manager (e.g., `apt-get`) | Easy and fast                     | Does not always offer latest version or all codecs
+Downloading static build                          | Easy and fast                     | Does not offer all encoders, manual update
+Installing from package manager (e.g., `apt-get`) | Easy and fast                     | Does not always offer latest version or all encoders
 
-Get source code and static builds from: http://ffmpeg.org/download.html
+* Get source code and static builds from: http://ffmpeg.org/download.html
+* Building on Windows: https://github.com/jb-alvarado/media-autobuild_suite
 
 ---
 
@@ -299,6 +300,8 @@ Encoders:
 * Specifies order of luma/color components and chroma subsampling
 
 ![](images/color-subsampling.png)
+
+<small>Image Source: [Wikipedia](https://en.wikipedia.org/wiki/Chroma_subsampling)</small>
 
 Supported  pixel formats:
 
