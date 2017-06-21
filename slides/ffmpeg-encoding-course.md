@@ -101,6 +101,11 @@ https://www.its.bldrdoc.gov/vqeg/video-datasets-and-organizations.aspx
 * Started in 2000
 * Continuous development until now
 
+Similar or related (and useful) frameworks:
+
+* [ImageMagick](https://www.imagemagick.org/)
+* [MLT Framework](https://www.mltframework.org/)
+
 ---
 
 ## Tools
@@ -109,6 +114,8 @@ FFmpeg contains:
 
 * Command-line tools: `ffmpeg`, `ffprobe`, `ffserver`, `ffplay`
 * Libraries: `libavformat`, `libavcodec`, `libavfilter`, …
+
+Libraries are used in many projects (VLC, MLT Framework, …)
 
 ---
 
