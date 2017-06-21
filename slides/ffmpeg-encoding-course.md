@@ -72,7 +72,7 @@ You should learn:
 
 * These slides
 * `ffmpeg`, `ffprobe` and `ffplay` installed
-* Some sample videos, example: http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_60fps_normal.mp4
+* Some sample videos, example: [Big Buck Bunny](http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_60fps_normal.mp4)
 
 ---
 
@@ -154,6 +154,7 @@ Places to get help:
 * ✉ Mailing list: https://lists.ffmpeg.org/mailman/listinfo/ffmpeg-user/
 * 🌐 Stack Overflow: https://stackoverflow.com/ and use `#ffmpeg`
 * 🌐 Super User: http://superuser.com/ and use `#ffmpeg`
+* … or ask me
 
 ---
 
@@ -244,12 +245,13 @@ Competitors that are royalty-free:
 
 Lossless codecs are useful for archival, editing, ...
 
-* 🎥 Raw YUV, HuffYUV, FFV1
-* 🔊 Raw PCM, FLAC, ALAC
+* 🎥 Raw YUV, HuffYUV, FFV1, …
+* 🔊 Raw PCM, FLAC, ALAC, …
 
 Also, "visually lossless" codecs exist:
 
-* 🎥 Apple ProRes, Avid DNxHD, high-quality H.264/H.265, ...
+* 🎥 Apple ProRes, Avid DNxHD, JPEG2000, high-quality H.264/H.265, ...
+* High bitrate and usually only I-frames
 
 ---
 
@@ -303,11 +305,7 @@ Encoders:
 
 <small>Image Source: [Wikipedia](https://en.wikipedia.org/wiki/Chroma_subsampling)</small>
 
-Supported  pixel formats:
-
-```
-ffmpeg -pix_fmts
-```
+Supported  pixel formats: `ffmpeg -pix_fmts`
 
 ---
 
@@ -322,7 +320,9 @@ Tasks:
 
         ffmpeg -loop 1 -i <image> -t 5 output.mp4
 
-* What codec and encoder are used for the output file?
+Questions:
+
+* What codec and encoder are auto-selected for the output file?
 * What pixel format is auto-selected by ffmpeg?
 * Why do you think this is done?
 
@@ -346,6 +346,9 @@ ffmpeg <global-options> <input-options> -i <input> <output-options> <output>
     * conversion (codec, quality, ...)
     * filtering
     * stream mapping
+    * …
+
+Full help: `ffmpeg -h full` or `man ffmpeg`
 
 ---
 
@@ -423,7 +426,7 @@ Examples of encoder-specific options:
 
 * `-crf` to set [Constant Rate Factor](http://slhck.info/video/2017/02/24/crf-guide.html) for libx264/libx265
 * `-vbr` to set constant quality for FDK-AAC encoder
-* Many many more; see `ffmpeg -h encoder=libx264` for examples
+* Many many more; see e.g. `ffmpeg -h encoder=libx264` for examples
 
 ---
 
@@ -459,8 +462,18 @@ Different kinds of rate control:
     * Average bitrate (ABR)
     * Constant quantization parameter (CQP)
     * Constant quality, based on psychovisual properties, e.g. CRF in x264/x265/libvpx-vp9
+    * Constrained bitrate (VBV)
 
 Which rate control to use for which case? More info: https://slhck.info/video/2017/03/01/rate-control.html
+
+---
+
+## Rate Control Examples
+
+![](images/rate-modes.png)
+
+* Frame sizes over time (smoothed) for different rate control modes
+* Observe wrong estimation of bitrate at the beginning for ABR
 
 ---
 
@@ -617,6 +630,24 @@ Notes:
 * `d` sets the duration
 * `st` sets the start time in seconds or `HH:MM:SS.msec`
 * `ffmpeg` can't "search from the back"; you have to find the total duration yourself (e.g. with `ffprobe`)
+
+---
+
+## Drawing Text
+
+Complex system for printing text on video:
+
+```bash
+ffmpeg -i <input> -vf \
+drawtext="text='Test Text':x=100:y=50:\
+fontsize=24:fontcolor=yellow:box=1:boxcolor=red" \
+<output>
+```
+
+* Various options related to font family, size, position, color, …
+* Text expansion (burn in frame number or timecode)
+
+See: http://ffmpeg.org/ffmpeg-all.html#drawtext-1
 
 ---
 
