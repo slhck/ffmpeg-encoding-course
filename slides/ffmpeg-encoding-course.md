@@ -316,7 +316,7 @@ Supported  pixel formats: `ffmpeg -pix_fmts`
 
 ---
 
-## Exercise
+## Exercise 1
 
 <!-- .slide: data-background-color="#660000" -->
 
@@ -696,20 +696,27 @@ See: http://trac.ffmpeg.org/wiki/Concatenate (also for other methods)
 
 ---
 
-## Exercise
+## Exercise 2 – Pt. 1
 
 <!-- .slide: data-background-color="#660000" -->
 
-Take an original 1920×1080 video file and downscale it to a height of 240 pixels. Keep the same aspect ratio. Keep the original audio stream without re-encoding.
+* Take an original 1920×1080 video file
+* Cut it to 5 seconds length and downscale it to a height of 240 pixels
+* Keep the same aspect ratio, keep the original audio stream without re-encoding.
+* Take the downscaled version of the video and append it to the original video by concatenating, and encode the final file with a lossless codec of your choice
+    * *Hint: You have to first upscale it again*
+    * Bonus points if you can do this in one command
 
-Tasks/Questions:
+## Exercise 2 – Pt. 2
+
+<!-- .slide: data-background-color="#660000" -->
+
+Questions:
 
 * How do you make ffmpeg find out the output width?
 * What is the final output width? What should the output width have been according to math?
 * Why are these values sometimes different?
-* Take the downscaled version of the video and append it to the original video by concatenating, and encode the final file with a lossless codec of your choice
-    * *Hint: You have to first upscale it again*
-    * Bonus points if you can do this in one command
+* Why do you have to upscale the video again when you concatenate it?
 
 ---
 
@@ -757,7 +764,7 @@ Notes:
 
 ---
 
-## Exercise Pt. 1
+## Exercise 3 – Pt. 1
 
 <!-- .slide: data-background-color="#660000" -->
 
@@ -770,11 +777,11 @@ Tasks:
 Hints:
 
 * This may take some time overall depending on your CPU speed
-* It's easier to write a simple Batch or Bash script than type all the commands
+* *Bonus points if you can write a simple Batch or Bash script rather than type all the commands*
 
 ---
 
-## Exercise Pt. 2
+## Exercise 3 – Pt. 2
 
 <!-- .slide: data-background-color="#660000" -->
 
@@ -791,6 +798,20 @@ Hints:
 * You can use the built-in `ssim` filter as a rough measure for quality
 * On Linux you can use the `time` command, on Windows this is a little harder (do a web search)
 * This can be done with Excel, but other tools like Python or R are useful as well
+
+---
+
+## Many other filters
+
+Examples:
+
+* Scene change detection using the `select` filter
+* Removing watermarks (`delogo`)
+* Blurring, edge detection and convolution filters
+* Video stabilization
+* Vectorscopes, histograms and other information
+* Chroma and alpha keying
+* Subtitle editing
 
 ---
 
