@@ -44,12 +44,11 @@ h1, h2, h3, h4, h5, p, pre, code {
 <!-- .slide: data-background-color="#006600" -->
 
 Werner Robitza  
-June 21, 2017
+April 11, 2018
 </script></section><section  data-markdown><script type="text/template">
 ## About me
 
-* Researcher at T-Labs of Deutsche Telekom in Berlin
-* PhD student at Technische Universität Ilmenau
+* PhD student and researcher at Technische Universität Ilmenau
 
 Contact:
 
@@ -103,7 +102,7 @@ Similar or related (and useful) frameworks:
 
 FFmpeg contains:
 
-* Command-line tools: `ffmpeg`, `ffprobe`, `ffserver`, `ffplay`
+* Command-line tools: `ffmpeg`, `ffprobe`, `ffplay`
 * Libraries: `libavformat`, `libavcodec`, `libavfilter`, …
 
 Libraries are used in many projects (VLC, MLT Framework, …)
@@ -180,6 +179,7 @@ File formats:
 * CODEC = *Co*der / *Dec*oder
 * Specification on how to code and decode video, audio, …
 * Usually **not** a specification on how to encode / compress data
+* Sometimes “codec” == actual encoding/decoding software
 
 See supported codecs with:
 
@@ -281,23 +281,6 @@ Encoders:
 
 Supported  pixel formats: `ffmpeg -pix_fmts`
 </script></section><section  data-markdown><script type="text/template">
-## Exercise 1
-
-<!-- .slide: data-background-color="#660000" -->
-
-Tasks:
-
-* Download a PNG image from the Web
-* Run the following command:
-
-        ffmpeg -loop 1 -i <image> -t 5 output.mp4
-
-Questions:
-
-* What codec and encoder are auto-selected for the output file?
-* What pixel format is auto-selected by ffmpeg?
-* Why do you think this is done?
-</script></section><section  data-markdown><script type="text/template">
 # Encoding with the `ffmpeg` Command Line Tool
 
 <!-- .slide: data-background-color="#333333" -->
@@ -366,12 +349,12 @@ ffmpeg -ss 00:01:50 -i <input> -t 10.5 -c copy <output>
 ffmpeg -ss 2.5 -i <input> -to 10 -c copy <output>
 ```
 
-Notes:
-
-* When re-encoding, seeking is always accurate
-* When copying bitstreams (`-c copy`), ffmpeg may copy frames that are not shown but necessary
-* Also see: http://trac.ffmpeg.org/wiki/Seeking
-</script></section><section  data-markdown><script type="text/template">
+<aside class="notes"><ul>
+<li>When re-encoding, seeking is always accurate</li>
+<li>When copying bitstreams (<code>-c copy</code>), ffmpeg may copy frames that are not shown but necessary</li>
+<li>Also see: <a href="http://trac.ffmpeg.org/wiki/Seeking">http://trac.ffmpeg.org/wiki/Seeking</a></li>
+</ul>
+</aside></script></section><section  data-markdown><script type="text/template">
 ## Setting Quality
 
 * The output quality depends on encoder defaults
@@ -504,13 +487,13 @@ A `<filter>` has a name and several options, and some pre-defined variables:
  -filter:v <name>=<option1>=<value1>:<option2>=<value2>
 ```
 
-Notes:
-
-* You can use `-filter:a` for audio filters.
-* Filters can be chained by separating them with a `,`
-* See all filters with `ffmpeg -filters`
-* Check http://trac.ffmpeg.org/wiki/FilteringGuide and http://ffmpeg.org/ffmpeg-filters.html
-</script></section><section  data-markdown><script type="text/template">
+<aside class="notes"><ul>
+<li>You can use <code>-filter:a</code> for audio filters.</li>
+<li>Filters can be chained by separating them with a <code>,</code></li>
+<li>See all filters with <code>ffmpeg -filters</code></li>
+<li>Check <a href="http://trac.ffmpeg.org/wiki/FilteringGuide">http://trac.ffmpeg.org/wiki/FilteringGuide</a> and <a href="http://ffmpeg.org/ffmpeg-filters.html">http://ffmpeg.org/ffmpeg-filters.html</a></li>
+</ul>
+</aside></script></section><section  data-markdown><script type="text/template">
 ## Scaling
 
 Scale to 320×240:
@@ -562,13 +545,13 @@ ffmpeg -i <input> -filter:v \
   <output>
 ```
 
-Notes:
-
-* `t` sets the fade type (in or out)
-* `d` sets the duration
-* `st` sets the start time in seconds or `HH:MM:SS.msec`
-* `ffmpeg` can't "search from the back"; you have to find the total duration yourself (e.g. with `ffprobe`)
-</script></section><section  data-markdown><script type="text/template">
+<aside class="notes"><ul>
+<li><code>t</code> sets the fade type (in or out)</li>
+<li><code>d</code> sets the duration</li>
+<li><code>st</code> sets the start time in seconds or <code>HH:MM:SS.msec</code></li>
+<li><code>ffmpeg</code> can&#39;t &quot;search from the back&quot;; you have to find the total duration yourself (e.g. with <code>ffprobe</code>)</li>
+</ul>
+</aside></script></section><section  data-markdown><script type="text/template">
 ## Drawing Text
 
 Complex system for printing text on video:
@@ -619,28 +602,6 @@ ffmpeg -i <input1> -i <input2> -i <input3> -filter_complex \
 
 See: http://trac.ffmpeg.org/wiki/Concatenate (also for other methods)
 </script></section><section  data-markdown><script type="text/template">
-## Exercise 2 – Pt. 1
-
-<!-- .slide: data-background-color="#660000" -->
-
-* Take an original 1920×1080 video file
-* Cut it to 5 seconds length and downscale it to a height of 240 pixels
-* Keep the same aspect ratio, keep the original audio stream without re-encoding.
-* Take the downscaled version of the video and append it to the original video by concatenating, and encode the final file with a lossless codec of your choice
-    * *Hint: You have to first upscale it again*
-    * Bonus points if you can do this in one command
-</script></section><section  data-markdown><script type="text/template">
-## Exercise 2 – Pt. 2
-
-<!-- .slide: data-background-color="#660000" -->
-
-Questions:
-
-* How do you make ffmpeg find out the output width?
-* What is the final output width? What should the output width have been according to math?
-* Why are these values sometimes different?
-* Why do you have to upscale the video again when you concatenate it?
-</script></section><section  data-markdown><script type="text/template">
 ## Timeline Editing
 
 Enable filters only at a specific point in time.
@@ -674,46 +635,13 @@ $ ffmpeg -i <degraded> -i <reference> -filter_complex ssim -f null /dev/null
 [Parsed_ssim_0 @ 0x7fbf0500b660] SSIM Y:0.925477 (11.277116) U:0.948906 (12.916325) V:0.946795 (12.740513) All:0.932935 (11.735054)
 ```
 
-Notes:
-
-* Optionally add: `2>&1 | grep SSIM` to filter only relevant output
-* Windows users use `NUL` instead of `/dev/null`
-* PSNR is an unreliable and inaccurate quality metric, SSIM is better but not perfect
-* Try to use "proper" video quality metrics instead, e.g. [VQM](https://www.its.bldrdoc.gov/resources/video-quality-research/software.aspx) or [VMAF](https://github.com/Netflix/vmaf)
-</script></section><section  data-markdown><script type="text/template">
-## Exercise 3 – Pt. 1
-
-<!-- .slide: data-background-color="#660000" -->
-
-Tasks:
-
-* Use two-pass encoding to transcode the sample video to H.264 with x264
-* Use the following bitrates: 1M, 2M, 4M, 6M, 8M
-* Encode the video with all existing speed presets for `libx264` and all chosen bitrates.
-
-Hints:
-
-* This may take some time overall depending on your CPU speed
-* *Bonus points if you can write a simple Batch or Bash script rather than type all the commands*
-</script></section><section  data-markdown><script type="text/template">
-## Exercise 3 – Pt. 2
-
-<!-- .slide: data-background-color="#660000" -->
-
-Questions:
-
-1. How long does the encoding take for a given speed preset, on average?
-2. For every target bitrate, draw a curve that shows the time taken (y-axis) vs. preset used (x-axis). (*Bonus points if you overlay the curves on top of each other in one plot, e.g. through different colors.*)
-3. Do you see a difference in quality between the encoded clips?
-4. Calculate a quality measure for the encoded videos with the different presets.
-5. For every target bitrate, draw a curve that shows the quality (y-axis) vs. preset used (x-axis). (*Bonus points if you overlay the curves on top of each other in one plot, e.g. through different colors.*)
-
-Hints:
-
-* You can use the built-in `ssim` filter as a rough measure for quality
-* On Linux you can use the `time` command, on Windows this is a little harder (do a web search)
-* This can be done with Excel, but other tools like Python or R are useful as well
-</script></section><section  data-markdown><script type="text/template">
+<aside class="notes"><ul>
+<li>Optionally add: <code>2&gt;&amp;1 | grep SSIM</code> to filter only relevant output</li>
+<li>Windows users use <code>NUL</code> instead of <code>/dev/null</code></li>
+<li>PSNR is an unreliable and inaccurate quality metric, SSIM is better but not perfect</li>
+<li>Try to use &quot;proper&quot; video quality metrics instead, e.g. <a href="https://www.its.bldrdoc.gov/resources/video-quality-research/software.aspx">VQM</a> or <a href="https://github.com/Netflix/vmaf">VMAF</a></li>
+</ul>
+</aside></script></section><section  data-markdown><script type="text/template">
 ## Many other filters
 
 Examples:
