@@ -1,7 +1,7 @@
 ---
 author: Werner Robitza
 title: FFmpeg Encoding and Editing Course
-date: April 11, 2018
+date: June 4, 2018
 theme: white
 highlightTheme: github
 revealOptions:
@@ -39,13 +39,14 @@ h1, h2, h3, h4, h5, p, pre, code {
 <!-- .slide: data-background-color="#006600" -->
 
 Werner Robitza  
-April 11, 2018
+June 04, 2018
 
 ---
 
 ## About me
 
-* PhD student and researcher at Technische Universität Ilmenau
+* Video quality and Quality of Experience researcher
+* PhD student and research assistant at Technische Universität Ilmenau
 
 Contact:
 
@@ -57,7 +58,7 @@ Contact:
 
 ## Goals
 
-You should learn:
+This course should cover:
 
 * Basic concepts
 * Installing ffmpeg and tools
@@ -70,7 +71,7 @@ You should learn:
 ## Requirements
 
 * These slides
-* `ffmpeg`, `ffprobe` and `ffplay` installed
+* `ffmpeg`, `ffprobe` and `ffplay` installed (it will be explained)
 * Some sample videos, example: [Big Buck Bunny](http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_60fps_normal.mp4)
 
 ---
@@ -114,7 +115,7 @@ FFmpeg contains:
 * Command-line tools: `ffmpeg`, `ffprobe`, `ffplay`
 * Libraries: `libavformat`, `libavcodec`, `libavfilter`, …
 
-Libraries are used in many projects (VLC, MLT Framework, …)
+Libraries are used in many projects (VLC, MLT Framework, …) and can be used from C/C++ code.
 
 ---
 
@@ -126,6 +127,11 @@ Libraries are used in many projects (VLC, MLT Framework, …)
 * ... and many more
 
 Examples on how to programmatically use libraries: http://leixiaohua1020.github.io/#ffmpeg-development-examples
+
+Further (non-FFmpeg) libraries that you may find useful:
+
+* OpenCV: more signal processing oriented
+* Python: MoviePy or `pyav`
 
 ---
 
@@ -141,8 +147,8 @@ Simplfied overall architecture:
 
 Installation Method                               | Pro                               | Con
 ------------------------------------------------- | --------------------------------- | ---------------------------------
-Building from source                              | Offers all options, tools, codecs | Takes time, hard to update
-Downloading static build                          | Easy and fast                     | Does not offer all encoders, manual update
+Building from source                              | Offers all options, tools, codecs | Takes time, harder to update
+Downloading static build                          | Easy and fast                     | Does not offer all encoders, manual update necessary
 Installing from package manager (e.g., `apt-get`) | Easy and fast                     | Does not always offer latest version or all encoders
 
 * Get source code and static builds from: http://ffmpeg.org/download.html
@@ -176,6 +182,7 @@ Containers *contain* media data. Typical examples:
 
 * MP4: MPEG-4 Part 14 container for H.264, H.264, AAC audio, …
 * MKV: Versatile container for any media format
+* WebM: Subset of MKV, usage in Web streaming
 * AVI: Legacy container
 
 See supported containers with:
@@ -236,21 +243,23 @@ Currently mostly used, standardized by ITU/ISO:
 
 * 🎥 H.262 / MPEG-2 Part H: Broadcasting, TV, used for backwards compatibility
 * 🎥 H.264 / MPEG-4 Part 10: The de-facto standard for video encoding today
-* 🎥 H.265 / MPEG-H: Successor of H.264, up to 50% better quality
+* 🎥 H.265 / HEVC / MPEG-H: Successor of H.264, up to 50% better quality
 * 🔊 MP3 / MPEG-2 Audio Layer III: Used to be the de-facto audio coding standard
 * 🔊 AAC / ISO/IEC 14496-3:2009: Advanced Audio Coding standard
 
 Competitors that are royalty-free:
 
-* 🎥 VP8: Free, open-source codec from Google
+* 🎥 VP8: Free, open-source codec from Google (not so much in use anymore)
 * 🎥 VP9: Successor to VP8, almost as good as H.265
-* 🎥 AV1: Currently in development as a successor to VP9
+* 🎥 AV1: A successor to VP9, claims to be better than H.265
 
 ---
 
 ## Most Important Lossless Codecs
 
 Lossless codecs are useful for archival, editing, ...
+
+Lossless = no compression artifacts at lower file size
 
 * 🎥 Raw YUV, HuffYUV, FFV1, …
 * 🔊 Raw PCM, FLAC, ALAC, …
@@ -265,7 +274,7 @@ Also, "visually lossless" codecs exist:
 ## Encoders
 
 * Encoders are the *actual* software that outputs a codec-compliant bitstream
-* Encoders can vary in quality and performance
+* Encoders can vary in quality and performance, some are better than others (and some are free, some are not)
 
 Examples:
 
@@ -273,6 +282,7 @@ Examples:
 * 🎥 NVENC: NVIDIA GPU-based H.264 encoder
 * 🎥 libx265: free and open-source HEVC encoder
 * 🎥 libvpx: VP8 and VP9 encoder from Google
+* 🎥 libaom: AV1 encoder
 * 🔊 libfdk-aac: AAC encoder
 * 🔊 `aac`: native FFmpeg AAC encoder
 * …
@@ -336,13 +346,13 @@ ffmpeg <global-options> <input-options> -i <input> <output-options> <output>
     * stream mapping
     * …
 
-Full help: `ffmpeg -h full` or `man ffmpeg`
+Full help: `ffmpeg -h full` or `man ffmpeg` – but it's huge!
 
 ---
 
 ## Transcoding and Transmuxing
 
-Transcoding from one codec to another:
+Transcoding from one codec to another (e.g. H.264 using `libx264`):
 
 ```bash
 ffmpeg -i <input> -c:v libx264 output.mp4
@@ -392,29 +402,49 @@ ffmpeg -ss 00:01:50 -i <input> -t 10.5 -c copy <output>
 ffmpeg -ss 2.5 -i <input> -to 10 -c copy <output>
 ```
 
-Notes:
+---
 
-* When re-encoding, seeking is always accurate
-* When copying bitstreams (`-c copy`), ffmpeg may copy frames that are not shown but necessary
-* Also see: http://trac.ffmpeg.org/wiki/Seeking
+### Notes about Seeking
 
+* When re-encoding video, seeking is always accurate to the timestamp
+* When copying bitstreams (`-c copy`), ffmpeg may copy frames that are not shown but necessary to include
+* Cutting with `-c copy` may yield video that starts with black frames (on unsupported players)
+* Also see:
+  * http://trac.ffmpeg.org/wiki/Seeking
+  * https://superuser.com/questions/138331/using-ffmpeg-to-cut-up-video
 ---
 
 ## Setting Quality
 
-* The output quality depends on encoder defaults
-* Do not just encode without setting any quality level
+* The output quality depends on encoder defaults and the source material
+* Do not just encode without setting any quality level!
+* Generally: You need to choose a target bitrate or quality level
+* Target bitrate depends on the video genre, size and framerate
+
+---
+
+### Options for Setting Quality
 
 Possible options (just examples):
 
-* `-b:v` or `-b:a` to set bitrate (e.g., `-b:v 1000K`, `-b:v 8M`)
-* `-q:v` or `-q:a` to set fixed-quality parameter (e.g., `-q:a 2` for native AAC encoder)
+* `-b:v` or `-b:a` to set bitrate
+  *  e.g., `-b:v 1000K` = 1000 kbit/s, `-b:v 8M` = 8 Mbit/s
+* `-q:v` or `-q:a` to set fixed-quality parameter
+  * e.g., `-q:a 2` for native AAC encoder
 
 Examples of encoder-specific options:
 
 * `-crf` to set [Constant Rate Factor](http://slhck.info/video/2017/02/24/crf-guide.html) for libx264/libx265
 * `-vbr` to set constant quality for FDK-AAC encoder
 * Many many more; see e.g. `ffmpeg -h encoder=libx264` for examples
+
+---
+
+### What is CRF?
+
+* CRF = [Constant Rate Factor](http://slhck.info/video/2017/02/24/crf-guide.html)
+* Maintain constant quality across the entire encode
+* Good for storing video at fixed quality if file size is not important
 
 ---
 
