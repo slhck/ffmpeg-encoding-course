@@ -48,22 +48,6 @@ This static site in `docs` will be shown via GitHub Pages.
 
 ## Converting to PDF
 
-To convert them to a PDF, install [Decktape](https://github.com/astefanutti/decktape):
+To convert them to a PDF, run:
 
-    curl -L https://github.com/astefanutti/decktape/archive/v1.0.0.tar.gz | tar -xz --exclude phantomjs
-    cd decktape-1.0.0
-
-Then install the PhandomJS fork:
-
-    # Windows (MSVC 2013), for Windows Vista or later, bundles VC++ Runtime 2013
-    $ curl -L https://github.com/astefanutti/decktape/releases/download/v1.0.0/phantomjs-msvc2013-x86.exe -o phantomjs.exe
-    # Mac OS X (Cocoa), 64-bit, for OS X 10.6 or later
-    $ curl -L https://github.com/astefanutti/decktape/releases/download/v1.0.0/phantomjs-osx-cocoa-x86-64 -o phantomjs
-    # Linux (static build), 64-bit, requires fontconfig (CentOS) or libfontconfig (Debian, Ubuntu)
-    $ curl -L https://github.com/astefanutti/decktape/releases/download/v1.0.0/phantomjs-linux-x86-64 -o phantomjs
-    # Make executable:
-    chmod +x phantomjs
-
-Then convert to PDF:
-
-    ./phantomjs decktape.js reveal "http://localhost:1948/ffmpeg-encoding-course.md#/" ffmpeg-encoding-course.pdf
+    reveal-md ffmpeg-encoding-course.md --print ffmpeg-encoding-course.pdf
