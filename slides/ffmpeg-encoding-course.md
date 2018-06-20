@@ -1,7 +1,7 @@
 ---
 author: Werner Robitza
 title: FFmpeg Encoding and Editing Course
-date: June 4, 2018
+date: June 20, 2018
 theme: white
 highlightTheme: github
 revealOptions:
@@ -128,10 +128,10 @@ Libraries are used in many projects (VLC, MLT Framework, …) and can be used fr
 
 Examples on how to programmatically use libraries: http://leixiaohua1020.github.io/#ffmpeg-development-examples
 
-Further (non-FFmpeg) libraries that you may find useful:
+Further (partly non-FFmpeg) libraries that you may find useful:
 
 * OpenCV: more signal processing oriented
-* Python: MoviePy or `pyav`
+* Python: MoviePy, `pyav`, `scikit-video`
 
 ---
 
@@ -261,7 +261,7 @@ Lossless codecs are useful for archival, editing, ...
 
 Lossless = no compression artifacts at lower file size
 
-* 🎥 Raw YUV, HuffYUV, FFV1, …
+* 🎥 Raw YUV, HuffYUV, FFV1, ffvhuff …
 * 🔊 Raw PCM, FLAC, ALAC, …
 
 Also, "visually lossless" codecs exist:
@@ -448,7 +448,7 @@ Examples of encoder-specific options:
 
 ---
 
-## Example: Transcoding to H.264
+## Example: Transcoding to H.264, pt. 1
 
 Constant quality (CRF) encoding:
 
@@ -456,7 +456,9 @@ Constant quality (CRF) encoding:
 ffmpeg -i <input> -c:v libx264 -crf 23 -c:a aac -b:a 128k output.mkv
 ```
 
-CRF between 18 and 28 looks "good", lower is better.
+For H.264, CRF between 18 and 28 looks "good", lower is better. (Different CRF for HEVC and VP9.)
+
+## Example: Transcoding to H.264, pt. 2
 
 Two-pass encoding:
 
@@ -483,6 +485,8 @@ Different kinds of rate control:
     * Constrained bitrate (VBV)
 
 Which rate control to use for which case? More info: https://slhck.info/video/2017/03/01/rate-control.html
+
+Important: Rate depends on content characteristics!
 
 ---
 
@@ -539,7 +543,11 @@ Simple way to change the framerate by dropping or duplicating frames:
 ffmpeg -i <input> -r 24 <output>
 ```
 
-More complex ways involve filtering, see `fps`, `mpdecimate`, `minterpolate` filters.
+More complex ways involve filtering, see `fps`, `mpdecimate`, `minterpolate` filters:
+
+```bash
+ffmpeg -i <input> -filter:v fps=24 <output>
+```
 
 ---
 
@@ -644,10 +652,10 @@ ffmpeg -i <input> -filter:v \
 
 Notes:
 
-* `t` sets the fade type (in or out)
-* `d` sets the duration
+* `t` sets the fade type (in or out), `d` sets the duration
 * `st` sets the start time in seconds or `HH:MM:SS.msec`
 * `ffmpeg` can't "search from the back"; you have to find the total duration yourself (e.g. with `ffprobe`)
+* See https://ffmpeg.org/ffmpeg-filters.html#fade
 
 ---
 
@@ -855,7 +863,7 @@ ffprobe <input> -select_streams a -show_entries stream=bit_rate -of compact=nk=1
 
 ## Debugging Motion Vectors
 
-Simple way to visualize motion in FFmpeg with MPEG codecs (H.264, H.265, …):
+Simple way to visualize motion in FFmpeg with H.264 codecs (does not work for other codecs):
 
 ```bash
 ffplay -flags2 +export_mvs input.mp4 -vf codecview=mv=pf+bf+bb
@@ -873,19 +881,6 @@ ffmpeg -flags2 +export_mvs -i input.mp4 -vf codecview=mv=pf+bf+bb <output>
 ![](images/vismv_pf.png)
 
 More info: http://trac.ffmpeg.org/wiki/Debug/MacroblocksAndMotionVectors
-
----
-
-## Debugging Macroblock Types
-
-Visualize macroblock splits in FFmpeg with MPEG codecs (H.264, H.265, …):
-
-```bash
-ffplay -debug vis_mb_type input.mp4
-ffmpeg -debug vis_mb_type -i input.mp4 output.mp4
-```
-
-![](images/vis_mb_type.png)
 
 ---
 
