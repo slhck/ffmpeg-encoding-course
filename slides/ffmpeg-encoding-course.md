@@ -180,7 +180,7 @@ Places to get help:
 
 Containers *contain* media data. Typical examples:
 
-* MP4: MPEG-4 Part 14 container for H.264, H.264, AAC audio, …
+* MP4: MPEG-4 Part 14 container for H.264 (AVC), H.265 (HEVC), AAC audio, …
 * MKV: Versatile container for any media format
 * WebM: Subset of MKV, usage in Web streaming
 * AVI: Legacy container
@@ -241,8 +241,8 @@ Codecs:
 
 Currently mostly used, standardized by ITU/ISO:
 
-* 🎥 H.262 / MPEG-2 Part H: Broadcasting, TV, used for backwards compatibility
-* 🎥 H.264 / MPEG-4 Part 10: The de-facto standard for video encoding today
+* 🎥 H.262 / MPEG-2 Part 2: Broadcasting, TV, used for backwards compatibility
+* 🎥 H.264 / AVC / MPEG-4 Part 10: The de-facto standard for video encoding today
 * 🎥 H.265 / HEVC / MPEG-H: Successor of H.264, up to 50% better quality
 * 🔊 MP3 / MPEG-2 Audio Layer III: Used to be the de-facto audio coding standard
 * 🔊 AAC / ISO/IEC 14496-3:2009: Advanced Audio Coding standard
@@ -252,6 +252,7 @@ Competitors that are royalty-free:
 * 🎥 VP8: Free, open-source codec from Google (not so much in use anymore)
 * 🎥 VP9: Successor to VP8, almost as good as H.265
 * 🎥 AV1: A successor to VP9, claims to be better than H.265
+* 🔊 Opus: Claims to be "unmatched for interactive speech and music transmission over the Internet"
 
 ---
 
@@ -259,10 +260,10 @@ Competitors that are royalty-free:
 
 Lossless codecs are useful for archival, editing, ...
 
-Lossless = no compression artifacts at lower file size
+There are two types of lossless formats; uncompressed lossless and compressed lossless. Both offer no compression artifacts, but compressed lossless formats have a smaller file size. Below are some examples, where "(c)" is used to denote a compressed lossless format.
 
-* 🎥 Raw YUV, HuffYUV, FFV1, ffvhuff …
-* 🔊 Raw PCM, FLAC, ALAC, …
+* 🎥 Raw YUV, HuffYUV (c), FFV1 (c), …
+* 🔊 Raw PCM, FLAC (c), ALAC (c), …
 
 Also, "visually lossless" codecs exist:
 
